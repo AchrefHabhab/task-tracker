@@ -1,41 +1,105 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Node modules
+node_modules/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# Next.js build output
+.next/
+out/
 
-# testing
-/coverage
 
-# next.js
-/.next/
-/out/
+# Production environment variables
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+.env.staging
+.env.production
+.env.*.backup
+*.env
 
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+yarn.lock
+pnpm-debug.log*
+pnpm-lock.yaml
+
+# OS-specific
+.DS_Store
+Thumbs.db
+._*
+
+# IDEs
+.idea/
+.vscode/
+
+# Optional: local development settings
+*.local
+
+# Optional: TypeScript build artifacts
+*.tsbuildinfo
+
+# Optional: Mac system files
+*.swp
+
+# Debug directories
+debug/
+*.debug.*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Test coverage
+coverage/
+*.lcov
+
+# Supabase
+supabase/.temp/
+supabase/.branches/
+
+# Editor directories and files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs/
+*.log
+lerna-debug.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# Testing
+test-results/
+playwright-report/
+playwright/.cache/
+e2e/.auth/
 
-# vercel
+# Misc
+*.pem
 .vercel
+.turbo
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Backup files
+*.backup
+*.bak
+*.orig
+*~
+.backup/
+
+# Database dumps
+*.sql
+*.dump
+*.db
+
+# Prisma generated client (Prisma 7+)
+src/generated/
+
+# CLAUDE.md
+CLAUDE.md
+.claude/rules/

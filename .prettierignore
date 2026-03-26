@@ -1,0 +1,7 @@
+# Build output
+.next/
+node_modules/
+coverage/
+
+# macOS resource fork files
+._*

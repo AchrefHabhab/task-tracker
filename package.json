@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint . && find . -name '._*' -not -path './node_modules/*' -delete",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "clean:macos": "find . -name '._*' -not -path './node_modules/*' -delete && find . -name '.DS_Store' -not -path './node_modules/*' -delete"
   },
   "dependencies": {
     "next": "16.2.1",
@@ -21,6 +25,8 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
