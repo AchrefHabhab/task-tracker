@@ -8,4 +8,5 @@ export type Task = {
   status: Status;
   priority: Priority;
   createdAt: Date;
+  updatedAt: Date;
 };

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { Task, Status, Priority } from '@/types/task';
+import type { Priority } from '@/types/task';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -20,13 +20,13 @@ import {
 } from '@/components/ui/select';
 
 interface AddTaskDialogProps {
-  onAdd: (task: Task) => void;
+  onAdd: (title: string, priority: Priority) => void;
+  isPending?: boolean;
 }
 
-export function AddTaskDialog({ onAdd }: AddTaskDialogProps) {
+export function AddTaskDialog({ onAdd, isPending }: AddTaskDialogProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
-  const [status, setStatus] = useState<Status>('todo');
   const [priority, setPriority] = useState<Priority>('medium');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,17 +34,8 @@ export function AddTaskDialog({ onAdd }: AddTaskDialogProps) {
 
     if (!title.trim()) return;
 
-    const newTask: Task = {
-      id: crypto.randomUUID(),
-      title: title.trim(),
-      status,
-      priority,
-      createdAt: new Date(),
-    };
-
-    onAdd(newTask);
+    onAdd(title.trim(), priority);
     setTitle('');
-    setStatus('todo');
     setPriority('medium');
     setOpen(false);
   };
@@ -69,24 +60,6 @@ export function AddTaskDialog({ onAdd }: AddTaskDialogProps) {
             />
           </div>
           <div className="grid gap-2">
-            <label htmlFor="status" className="text-sm font-medium">
-              Status
-            </label>
-            <Select
-              value={status}
-              onValueChange={(v) => setStatus(v as Status)}
-            >
-              <SelectTrigger id="status">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todo">To Do</SelectItem>
-                <SelectItem value="in-progress">In Progress</SelectItem>
-                <SelectItem value="done">Done</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="grid gap-2">
             <label htmlFor="priority" className="text-sm font-medium">
               Priority
             </label>
@@ -104,8 +77,8 @@ export function AddTaskDialog({ onAdd }: AddTaskDialogProps) {
               </SelectContent>
             </Select>
           </div>
-          <Button type="submit" className="mt-2">
-            Create Task
+          <Button type="submit" className="mt-2" disabled={isPending}>
+            {isPending ? 'Creating...' : 'Create Task'}
           </Button>
         </form>
       </DialogContent>
