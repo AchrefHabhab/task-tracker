@@ -4,7 +4,8 @@ import type { Task } from '@/types/task';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowRightCircle, Trash2 } from 'lucide-react';
+import { ArrowRightCircle, Trash2, CheckCircle2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const statusColors: Record<Task['status'], string> = {
   todo: 'bg-muted text-muted-foreground',
@@ -33,11 +34,23 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onDelete, onToggleStatus }: TaskCardProps) {
+  const isDone = task.status === 'done';
+
   return (
-    <Card>
+    <Card className={cn('transition-opacity', isDone && 'opacity-60')}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-medium">{task.title}</CardTitle>
+          <CardTitle
+            className={cn(
+              'text-base font-medium transition-all',
+              isDone && 'text-muted-foreground line-through'
+            )}
+          >
+            {isDone && (
+              <CheckCircle2 className="mr-1.5 inline-block size-4 text-green-600 dark:text-green-400" />
+            )}
+            {task.title}
+          </CardTitle>
           <Badge className={priorityColors[task.priority]}>
             {task.priority}
           </Badge>
