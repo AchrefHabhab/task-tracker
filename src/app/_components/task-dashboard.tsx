@@ -9,22 +9,17 @@ import {
   updateTask,
   updateTaskStatus,
 } from '@/app/_actions/task-actions';
-import { TaskList } from './task-list';
+import { fireConfetti } from '@/lib/confetti';
+import { KanbanBoard } from './kanban-board';
+import { StatsPanel } from './stats-panel';
 import { AddTaskDialog } from './add-task-dialog';
 import { ThemeToggle } from './theme-toggle';
-import { TaskFilters } from './task-filters';
 import { SearchBar } from './search-bar';
 import { ProgressBar } from './progress-bar';
 
 interface TaskDashboardProps {
   tasks: Task[];
 }
-
-const nextStatus: Record<Status, Status> = {
-  todo: 'in-progress',
-  'in-progress': 'done',
-  done: 'todo',
-};
 
 const statusLabels: Record<Status, string> = {
   todo: 'To Do',
@@ -33,38 +28,21 @@ const statusLabels: Record<Status, string> = {
 };
 
 export function TaskDashboard({ tasks }: TaskDashboardProps) {
-  const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
-  const [priorityFilter, setPriorityFilter] = useState<Priority | 'all'>('all');
   const [search, setSearch] = useState('');
   const [isPending, startTransition] = useTransition();
 
   const filteredTasks = useMemo(() => {
     const query = search.toLowerCase().trim();
-    return tasks.filter((task) => {
-      const matchesSearch = !query || task.title.toLowerCase().includes(query);
-      const matchesStatus =
-        statusFilter === 'all' || task.status === statusFilter;
-      const matchesPriority =
-        priorityFilter === 'all' || task.priority === priorityFilter;
-      return matchesSearch && matchesStatus && matchesPriority;
-    });
-  }, [tasks, search, statusFilter, priorityFilter]);
+    if (!query) return tasks;
+    return tasks.filter((task) =>
+      task.title.toLowerCase().includes(query)
+    );
+  }, [tasks, search]);
 
-  const taskCounts = useMemo(() => {
-    return {
-      total: tasks.length,
-      byStatus: {
-        todo: tasks.filter((t) => t.status === 'todo').length,
-        'in-progress': tasks.filter((t) => t.status === 'in-progress').length,
-        done: tasks.filter((t) => t.status === 'done').length,
-      },
-      byPriority: {
-        low: tasks.filter((t) => t.priority === 'low').length,
-        medium: tasks.filter((t) => t.priority === 'medium').length,
-        high: tasks.filter((t) => t.priority === 'high').length,
-      },
-    };
-  }, [tasks]);
+  const doneCount = useMemo(
+    () => tasks.filter((t) => t.status === 'done').length,
+    [tasks]
+  );
 
   const handleAddTask = (title: string, priority: Priority) => {
     startTransition(async () => {
@@ -81,16 +59,6 @@ export function TaskDashboard({ tasks }: TaskDashboardProps) {
     });
   };
 
-  const handleToggleStatus = (id: string) => {
-    const task = tasks.find((t) => t.id === id);
-    if (!task) return;
-    const newStatus = nextStatus[task.status];
-    startTransition(async () => {
-      await updateTaskStatus(id, newStatus);
-      toast.success(`"${task.title}" → ${statusLabels[newStatus]}`);
-    });
-  };
-
   const handleEditTask = (updated: Task) => {
     startTransition(async () => {
       await updateTask(updated.id, {
@@ -102,8 +70,21 @@ export function TaskDashboard({ tasks }: TaskDashboardProps) {
     });
   };
 
+  const handleMoveTask = (taskId: string, newStatus: Status) => {
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task) return;
+
+    startTransition(async () => {
+      await updateTaskStatus(taskId, newStatus);
+      toast.success(`"${task.title}" → ${statusLabels[newStatus]}`);
+      if (newStatus === 'done') {
+        fireConfetti();
+      }
+    });
+  };
+
   return (
-    <div className="mx-auto min-h-screen w-full max-w-2xl px-4 py-10">
+    <div className="mx-auto min-h-screen w-full max-w-6xl px-4 py-10">
       <header className="mb-8">
         <div className="flex items-center justify-between">
           <div>
@@ -111,7 +92,7 @@ export function TaskDashboard({ tasks }: TaskDashboardProps) {
             <p className="mt-1 text-sm text-muted-foreground">
               {tasks.length === 0
                 ? 'No tasks yet — add one to get started'
-                : `${taskCounts.byStatus.done} of ${tasks.length} tasks completed`}
+                : `${doneCount} of ${tasks.length} tasks completed`}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -120,23 +101,16 @@ export function TaskDashboard({ tasks }: TaskDashboardProps) {
           </div>
         </div>
       </header>
-      <ProgressBar
-        completed={taskCounts.byStatus.done}
-        total={tasks.length}
-      />
+
+      <ProgressBar completed={doneCount} total={tasks.length} />
+      <StatsPanel tasks={tasks} />
       <SearchBar value={search} onChange={setSearch} />
-      <TaskFilters
-        activeStatus={statusFilter}
-        activePriority={priorityFilter}
-        onStatusChange={setStatusFilter}
-        onPriorityChange={setPriorityFilter}
-        taskCounts={taskCounts}
-      />
-      <TaskList
+
+      <KanbanBoard
         tasks={filteredTasks}
         onDelete={handleDeleteTask}
-        onToggleStatus={handleToggleStatus}
         onEdit={handleEditTask}
+        onMoveTask={handleMoveTask}
       />
     </div>
   );
