@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowRightCircle, Trash2, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { EditTaskDialog } from './edit-task-dialog';
 
 const statusColors: Record<Task['status'], string> = {
   todo: 'bg-muted text-muted-foreground',
@@ -31,9 +32,10 @@ interface TaskCardProps {
   task: Task;
   onDelete: (id: string) => void;
   onToggleStatus: (id: string) => void;
+  onEdit: (updated: Task) => void;
 }
 
-export function TaskCard({ task, onDelete, onToggleStatus }: TaskCardProps) {
+export function TaskCard({ task, onDelete, onToggleStatus, onEdit }: TaskCardProps) {
   const isDone = task.status === 'done';
 
   return (
@@ -69,6 +71,7 @@ export function TaskCard({ task, onDelete, onToggleStatus }: TaskCardProps) {
                 year: 'numeric',
               })}
             </span>
+            <EditTaskDialog task={task} onEdit={onEdit} />
             <Button
               variant="ghost"
               size="icon-sm"

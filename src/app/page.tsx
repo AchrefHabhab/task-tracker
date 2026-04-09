@@ -8,6 +8,8 @@ import { TaskList } from './_components/task-list';
 import { AddTaskDialog } from './_components/add-task-dialog';
 import { ThemeToggle } from './_components/theme-toggle';
 import { TaskFilters } from './_components/task-filters';
+import { SearchBar } from './_components/search-bar';
+import { ProgressBar } from './_components/progress-bar';
 
 const initialTasks: Task[] = [
   {
@@ -49,16 +51,19 @@ export default function Home() {
   );
   const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
   const [priorityFilter, setPriorityFilter] = useState<Priority | 'all'>('all');
+  const [search, setSearch] = useState('');
 
   const filteredTasks = useMemo(() => {
+    const query = search.toLowerCase().trim();
     return tasks.filter((task) => {
+      const matchesSearch = !query || task.title.toLowerCase().includes(query);
       const matchesStatus =
         statusFilter === 'all' || task.status === statusFilter;
       const matchesPriority =
         priorityFilter === 'all' || task.priority === priorityFilter;
-      return matchesStatus && matchesPriority;
+      return matchesSearch && matchesStatus && matchesPriority;
     });
-  }, [tasks, statusFilter, priorityFilter]);
+  }, [tasks, search, statusFilter, priorityFilter]);
 
   const taskCounts = useMemo(() => {
     return {
@@ -99,6 +104,13 @@ export default function Home() {
     done: 'Done',
   };
 
+  const handleEditTask = (updated: Task) => {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === updated.id ? updated : t))
+    );
+    toast.success(`Task "${updated.title}" updated`);
+  };
+
   const handleToggleStatus = (id: string) => {
     const task = tasks.find((t) => t.id === id);
     if (!task) return;
@@ -112,14 +124,28 @@ export default function Home() {
   };
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-2xl px-4 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-semibold">Task Tracker</h1>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <AddTaskDialog onAdd={handleAddTask} />
+    <div className="mx-auto min-h-screen w-full max-w-2xl px-4 py-10">
+      <header className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Task Tracker</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {tasks.length === 0
+                ? 'No tasks yet — add one to get started'
+                : `${taskCounts.byStatus.done} of ${tasks.length} tasks completed`}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <AddTaskDialog onAdd={handleAddTask} />
+          </div>
         </div>
-      </div>
+      </header>
+      <ProgressBar
+        completed={taskCounts.byStatus.done}
+        total={tasks.length}
+      />
+      <SearchBar value={search} onChange={setSearch} />
       <TaskFilters
         activeStatus={statusFilter}
         activePriority={priorityFilter}
@@ -131,6 +157,7 @@ export default function Home() {
         tasks={filteredTasks}
         onDelete={handleDeleteTask}
         onToggleStatus={handleToggleStatus}
+        onEdit={handleEditTask}
       />
     </div>
   );

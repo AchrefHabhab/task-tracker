@@ -1,5 +1,6 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
 import type { Task } from '@/types/task';
 import { ClipboardList } from 'lucide-react';
 import { TaskCard } from './task-card';
@@ -8,31 +9,45 @@ interface TaskListProps {
   tasks: Task[];
   onDelete: (id: string) => void;
   onToggleStatus: (id: string) => void;
+  onEdit: (updated: Task) => void;
 }
 
-export function TaskList({ tasks, onDelete, onToggleStatus }: TaskListProps) {
+export function TaskList({ tasks, onDelete, onToggleStatus, onEdit }: TaskListProps) {
   if (tasks.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col items-center justify-center py-16 text-muted-foreground"
+      >
         <ClipboardList className="mb-3 size-10 opacity-50" />
         <p className="text-lg font-medium">No tasks found</p>
-        <p className="text-sm">
-          Add a new task or adjust your filters.
-        </p>
-      </div>
+        <p className="text-sm">Add a new task or adjust your filters.</p>
+      </motion.div>
     );
   }
 
   return (
     <div className="grid gap-3">
-      {tasks.map((task) => (
-        <TaskCard
-          key={task.id}
-          task={task}
-          onDelete={onDelete}
-          onToggleStatus={onToggleStatus}
-        />
-      ))}
+      <AnimatePresence mode="popLayout">
+        {tasks.map((task) => (
+          <motion.div
+            key={task.id}
+            layout
+            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, x: -20 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            <TaskCard
+              task={task}
+              onDelete={onDelete}
+              onToggleStatus={onToggleStatus}
+              onEdit={onEdit}
+            />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }
