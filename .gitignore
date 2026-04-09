@@ -103,3 +103,6 @@ src/generated/
 # CLAUDE.md
 CLAUDE.md
 .claude/rules/
+
+# Personal learning notes
+LEARNING_NOTES.md
