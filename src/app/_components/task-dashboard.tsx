@@ -88,14 +88,16 @@ export function TaskDashboard({ tasks }: TaskDashboardProps) {
       <header className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Task Tracker</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <h1 className="text-3xl font-extrabold tracking-tight">
+              <span className="mr-2">🚀</span>Task Tracker
+            </h1>
+            <p className="mt-1.5 text-sm text-muted-foreground">
               {tasks.length === 0
-                ? 'No tasks yet — add one to get started'
-                : `${doneCount} of ${tasks.length} tasks completed`}
+                ? '📝 No tasks yet — add one to get started'
+                : `✨ ${doneCount} of ${tasks.length} tasks completed`}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <ThemeToggle />
             <AddTaskDialog onAdd={handleAddTask} isPending={isPending} />
           </div>

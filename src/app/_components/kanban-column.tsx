@@ -12,26 +12,53 @@ import { KanbanCard } from './kanban-card';
 
 const columnConfig: Record<
   Task['status'],
-  { label: string; color: string; bg: string; icon: string }
+  {
+    label: string;
+    color: string;
+    bg: string;
+    icon: string;
+    accentBorder: string;
+    dropBg: string;
+  }
 > = {
   todo: {
     label: 'To Do',
-    color: 'text-slate-600 dark:text-slate-300',
-    bg: 'bg-slate-100 dark:bg-slate-800/50',
+    color: 'text-slate-700 dark:text-slate-200',
+    bg: 'bg-slate-50/80 dark:bg-slate-800/40',
     icon: '📋',
+    accentBorder: 'border-t-slate-400 dark:border-t-slate-500',
+    dropBg: 'bg-slate-200/40 dark:bg-slate-700/30',
   },
   'in-progress': {
     label: 'In Progress',
-    color: 'text-blue-600 dark:text-blue-300',
-    bg: 'bg-blue-50 dark:bg-blue-900/20',
-    icon: '🔄',
+    color: 'text-blue-700 dark:text-blue-200',
+    bg: 'bg-blue-50/80 dark:bg-blue-950/30',
+    icon: '⚡',
+    accentBorder: 'border-t-blue-500 dark:border-t-blue-400',
+    dropBg: 'bg-blue-100/40 dark:bg-blue-900/30',
   },
   done: {
     label: 'Done',
-    color: 'text-green-600 dark:text-green-300',
-    bg: 'bg-green-50 dark:bg-green-900/20',
-    icon: '✅',
+    color: 'text-green-700 dark:text-green-200',
+    bg: 'bg-green-50/80 dark:bg-green-950/30',
+    icon: '🎉',
+    accentBorder: 'border-t-green-500 dark:border-t-green-400',
+    dropBg: 'bg-green-100/40 dark:bg-green-900/30',
   },
+};
+
+const columnVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring' as const,
+      stiffness: 260,
+      damping: 22,
+      delay: i * 0.08,
+    },
+  }),
 };
 
 interface KanbanColumnProps {
@@ -39,6 +66,7 @@ interface KanbanColumnProps {
   tasks: Task[];
   onDelete: (id: string) => void;
   onEdit: (updated: Task) => void;
+  index: number;
 }
 
 export function KanbanColumn({
@@ -46,6 +74,7 @@ export function KanbanColumn({
   tasks,
   onDelete,
   onEdit,
+  index,
 }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: status });
   const config = columnConfig[status];
@@ -53,36 +82,46 @@ export function KanbanColumn({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+      custom={index}
+      variants={columnVariants}
+      initial="hidden"
+      animate="visible"
       className={cn(
-        'flex flex-col rounded-xl border p-3 transition-colors duration-200',
+        'flex flex-col rounded-2xl border border-t-[3px] p-3 transition-all duration-300',
         config.bg,
-        isOver && 'ring-2 ring-primary/50 bg-primary/5'
+        config.accentBorder,
+        isOver && `ring-2 ring-primary/40 ${config.dropBg} scale-[1.01]`
       )}
     >
       <div className="mb-3 flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
-          <span className="text-base">{config.icon}</span>
-          <h3 className={cn('text-sm font-semibold', config.color)}>
+          <motion.span
+            className="text-lg"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 15, delay: index * 0.08 + 0.15 }}
+          >
+            {config.icon}
+          </motion.span>
+          <h3 className={cn('text-sm font-bold tracking-tight', config.color)}>
             {config.label}
           </h3>
         </div>
-        <span
+        <motion.span
+          layout
           className={cn(
-            'flex size-5 items-center justify-center rounded-full text-[11px] font-bold',
+            'flex size-6 items-center justify-center rounded-full text-xs font-bold',
             config.color,
-            'bg-white/60 dark:bg-white/10'
+            'bg-white/70 dark:bg-white/10'
           )}
         >
           {tasks.length}
-        </span>
+        </motion.span>
       </div>
 
       <div
         ref={setNodeRef}
-        className="flex min-h-[120px] flex-1 flex-col gap-2"
+        className="flex min-h-[140px] flex-1 flex-col gap-2 overflow-y-auto"
       >
         <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
           <AnimatePresence mode="popLayout">
@@ -99,11 +138,13 @@ export function KanbanColumn({
 
         {tasks.length === 0 && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/20 py-8 text-xs text-muted-foreground"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-1 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-muted-foreground/15 py-10 text-muted-foreground"
           >
-            Drop tasks here
+            <span className="text-2xl">📭</span>
+            <span className="text-xs font-medium">Drop tasks here</span>
           </motion.div>
         )}
       </div>

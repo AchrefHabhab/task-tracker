@@ -92,21 +92,28 @@ export function KanbanBoard({
       onDragEnd={handleDragEnd}
     >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        {statuses.map((status) => (
+        {statuses.map((status, i) => (
           <KanbanColumn
             key={status}
             status={status}
             tasks={getTasksByStatus(status)}
             onDelete={onDelete}
             onEdit={onEdit}
+            index={i}
           />
         ))}
       </div>
 
-      <DragOverlay>
+      <DragOverlay dropAnimation={null}>
         {activeTask ? (
-          <div className="rotate-3 rounded-lg border bg-card p-3 shadow-2xl opacity-90">
-            <p className="text-sm font-medium">{activeTask.title}</p>
+          <div className="rotate-[3deg] rounded-xl border-2 border-primary/30 bg-card p-3 shadow-2xl">
+            <p className="text-[13px] font-semibold tracking-tight">
+              {activeTask.title}
+            </p>
+            <span className="mt-1 text-[11px] text-muted-foreground">
+              {activeTask.priority === 'high' ? '🔴' : activeTask.priority === 'medium' ? '🟡' : '🟢'}{' '}
+              {activeTask.priority}
+            </span>
           </div>
         ) : null}
       </DragOverlay>

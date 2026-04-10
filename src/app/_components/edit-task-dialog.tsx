@@ -57,7 +57,15 @@ export function EditTaskDialog({ task, onEdit }: EditTaskDialogProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger
-        render={<Button variant="ghost" size="icon-sm" aria-label="Edit task" />}
+        render={
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Edit task"
+            onPointerDown={(e: React.PointerEvent) => e.stopPropagation()}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          />
+        }
       >
         <Pencil className="size-4" />
       </DialogTrigger>

@@ -75,7 +75,7 @@ export function StatsPanel({ tasks }: StatsPanelProps) {
       {/* Completion Ring */}
       <div className="flex flex-col items-center justify-center rounded-xl border bg-card p-4">
         <p className="mb-2 text-xs font-medium text-muted-foreground">
-          Completion
+          🎯 Completion
         </p>
         <div className="relative size-24">
           <svg className="size-full -rotate-90" viewBox="0 0 36 36">
@@ -124,7 +124,7 @@ export function StatsPanel({ tasks }: StatsPanelProps) {
       {/* Status Distribution */}
       <div className="flex flex-col items-center rounded-xl border bg-card p-4">
         <p className="mb-2 text-xs font-medium text-muted-foreground">
-          By Status
+          📊 By Status
         </p>
         <ResponsiveContainer width="100%" height={100}>
           <PieChart>
@@ -172,7 +172,7 @@ export function StatsPanel({ tasks }: StatsPanelProps) {
       {/* Priority Breakdown */}
       <div className="flex flex-col items-center rounded-xl border bg-card p-4">
         <p className="mb-2 text-xs font-medium text-muted-foreground">
-          By Priority
+          🏷️ By Priority
         </p>
         <ResponsiveContainer width="100%" height={100}>
           <BarChart
