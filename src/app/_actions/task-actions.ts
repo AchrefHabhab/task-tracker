@@ -24,6 +24,13 @@ export async function deleteTask(id: string) {
   revalidatePath('/');
 }
 
+export async function restoreTask(title: string, priority: Priority, status: Status) {
+  await db.task.create({
+    data: { title, priority, status },
+  });
+  revalidatePath('/');
+}
+
 export async function updateTaskStatus(id: string, status: Status) {
   await db.task.update({
     where: { id },

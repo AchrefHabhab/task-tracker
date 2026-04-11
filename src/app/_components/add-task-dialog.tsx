@@ -24,10 +24,14 @@ const priorities: { value: Priority; emoji: string; label: string; color: string
 interface AddTaskDialogProps {
   onAdd: (title: string, priority: Priority) => void;
   isPending?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function AddTaskDialog({ onAdd, isPending }: AddTaskDialogProps) {
-  const [open, setOpen] = useState(false);
+export function AddTaskDialog({ onAdd, isPending, open: controlledOpen, onOpenChange }: AddTaskDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
   const [title, setTitle] = useState('');
   const [priority, setPriority] = useState<Priority>('medium');
 

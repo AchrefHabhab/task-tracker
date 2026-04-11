@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,10 @@ interface SearchBarProps {
   onChange: (value: string) => void;
 }
 
-export function SearchBar({ value, onChange }: SearchBarProps) {
+function SearchBarInner(
+  { value, onChange }: SearchBarProps,
+  ref: React.ForwardedRef<HTMLInputElement>
+) {
   const [focused, setFocused] = useState(false);
 
   return (
@@ -33,8 +36,9 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
           )}
         />
         <input
+          ref={ref}
           type="text"
-          placeholder="🔍  Search tasks..."
+          placeholder="🔍  Search tasks...  ⌘K"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
@@ -65,3 +69,5 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
     </div>
   );
 }
+
+export const SearchBar = forwardRef(SearchBarInner);
