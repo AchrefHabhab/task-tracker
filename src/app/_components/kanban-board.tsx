@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useId } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -31,6 +31,7 @@ export function KanbanBoard({
   onEdit,
   onMoveTask,
 }: KanbanBoardProps) {
+  const dndId = useId();
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -85,6 +86,7 @@ export function KanbanBoard({
 
   return (
     <DndContext
+      id={dndId}
       sensors={sensors}
       collisionDetection={closestCorners}
       onDragStart={handleDragStart}
