@@ -121,7 +121,7 @@ export function KanbanColumn({
 
       <div
         ref={setNodeRef}
-        className="flex min-h-[140px] flex-1 flex-col gap-2 overflow-y-auto"
+        className="kanban-scroll flex min-h-[140px] max-h-[60vh] flex-1 flex-col gap-2 overflow-y-auto"
       >
         <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
           <AnimatePresence mode="popLayout">

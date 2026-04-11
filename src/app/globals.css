@@ -127,9 +127,43 @@
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
   }
-  .dark body,
-  body {
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
+}
+
+/* Smooth scrollable kanban columns */
+.kanban-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.7 0 0 / 30%) transparent;
+  scroll-behavior: smooth;
+}
+
+.kanban-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.kanban-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.kanban-scroll::-webkit-scrollbar-thumb {
+  background: oklch(0.7 0 0 / 30%);
+  border-radius: 9999px;
+}
+
+.kanban-scroll::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.6 0 0 / 50%);
+}
+
+/* Smooth transitions for cards and interactive elements */
+.card-transition {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+/* Focus ring animation */
+*:focus-visible {
+  outline: 2px solid oklch(0.6 0.15 250);
+  outline-offset: 2px;
+  border-radius: 8px;
+  transition: outline-offset 0.15s ease;
 }
