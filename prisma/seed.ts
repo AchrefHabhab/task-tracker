@@ -1,40 +1,14 @@
 import 'dotenv/config';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma/client';
 
-const adapter = new PrismaBetterSqlite3({
-  url: process.env.DATABASE_URL!,
-});
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const count = await prisma.task.count();
-  if (count > 0) {
-    console.log(`Database already has ${count} tasks, skipping seed.`);
-    return;
-  }
-
-  await prisma.task.createMany({
-    data: [
-      {
-        title: 'Learn Next.js App Router',
-        status: 'in-progress',
-        priority: 'high',
-      },
-      {
-        title: 'Build Task Tracker UI',
-        status: 'todo',
-        priority: 'medium',
-      },
-      {
-        title: 'Set up project structure',
-        status: 'done',
-        priority: 'high',
-      },
-    ],
-  });
-
-  console.log('Seeded 3 initial tasks.');
+  // Seed script is no longer needed — each visitor gets auto-seeded
+  // via getSessionId() on first visit. Keeping this as a no-op.
+  console.log('Seed skipped — visitors are auto-seeded on first visit.');
 }
 
 main()

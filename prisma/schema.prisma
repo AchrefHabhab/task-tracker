@@ -4,14 +4,17 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model Task {
   id        String   @id @default(cuid())
+  sessionId String
   title     String
   status    String   @default("todo")
   priority  String   @default("medium")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([sessionId])
 }
